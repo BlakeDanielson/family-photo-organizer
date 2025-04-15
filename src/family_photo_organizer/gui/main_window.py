@@ -10,12 +10,19 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
     QFileDialog,
+    QTableWidget,
+    QTableWidgetItem,
+    QHeaderView,
 )
 from PySide6.QtGui import QAction
+from PySide6.QtCore import Qt # For date formatting
 
 # Import the metadata extractor
 from family_photo_organizer.core.metadata_extractor import extract_basic_metadata
+# Import the Photo class
+from family_photo_organizer.core.photo import Photo
 import os # Needed for folder scanning
+from datetime import datetime
 
 
 class MainWindow(QMainWindow):
@@ -28,6 +35,8 @@ class MainWindow(QMainWindow):
 
         self._create_menus()
         self._create_central_widget()
+
+        self.photos = [] # List to store Photo objects
 
     def _create_menus(self):
         """Create the menu bar."""
@@ -54,8 +63,22 @@ class MainWindow(QMainWindow):
         """Create the central widget placeholder."""
         central_widget = QWidget()
         layout = QVBoxLayout()
+
+        # Create the table widget
+        self.photo_table = QTableWidget()
+        self.photo_table.setColumnCount(2)
+        self.photo_table.setHorizontalHeaderLabels(["Filename", "Capture Date"])
+        self.photo_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch) # Filename stretches
+        self.photo_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents) # Date resizes
+        self.photo_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers) # Make read-only
+        self.photo_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+
+        layout.addWidget(self.photo_table)
+
+        # Status label at the bottom
         self.status_label = QLabel("Welcome! Select File > Open to load photos.")
         layout.addWidget(self.status_label)
+
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
 
@@ -105,19 +128,60 @@ class MainWindow(QMainWindow):
         Args:
             file_paths (list): A list of absolute paths to image files.
         """
-        all_metadata = []
+        new_photos_processed = 0
+        existing_files = {photo.file_path for photo in self.photos}
+        
         for file_path in file_paths:
+            if file_path in existing_files:
+                print(f"Skipping already loaded file: {os.path.basename(file_path)}")
+                continue
+                
             print(f"--- Processing: {os.path.basename(file_path)} ---")
             metadata = extract_basic_metadata(file_path)
             if metadata:
                 print(f"  Capture Date: {metadata.get('capture_date')}")
-                all_metadata.append(metadata)
+
+                # Create Photo object and add to list
+                photo = Photo(file_path=file_path)
+                photo.update_metadata(metadata)
+                self.photos.append(photo)
+                new_photos_processed += 1
             else:
                 print("  Could not extract metadata.")
             print("-------------------------------")
         
         # TODO: Store or display the extracted metadata
-        print(f"\nSuccessfully extracted metadata for {len(all_metadata)} out of {len(file_paths)} files.")
+        # TODO: Update GUI to show the photos
+        self.update_photo_table()
+
+        print(f"\nProcessed {new_photos_processed} new files. Total photos loaded: {len(self.photos)}.")
+
+    def update_photo_table(self):
+        """Updates the QTableWidget with the current list of photos."""
+        self.photo_table.setRowCount(len(self.photos))
+        
+        # Sort photos by capture date (most recent first), handle None dates
+        sorted_photos = sorted(
+            self.photos,
+            key=lambda p: p.capture_date if p.capture_date else datetime.min,
+            reverse=True
+        )
+
+        for row, photo in enumerate(sorted_photos):
+            filename_item = QTableWidgetItem(photo.filename)
+            
+            date_str = "N/A"
+            if photo.capture_date:
+                try:
+                    # Format date nicely, check Qt documentation for specific formats
+                    date_str = photo.capture_date.strftime("%Y-%m-%d %H:%M:%S")
+                except AttributeError:
+                    date_str = str(photo.capture_date) # Fallback
+
+            date_item = QTableWidgetItem(date_str)
+
+            self.photo_table.setItem(row, 0, filename_item)
+            self.photo_table.setItem(row, 1, date_item)
 
 
 # Example usage for testing the window directly
