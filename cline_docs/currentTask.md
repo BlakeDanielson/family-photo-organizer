@@ -1,24 +1,24 @@
 ## Current Objective
 
-- Implement basic photo loading and metadata extraction.
+- Define data structure, store photos, and display in GUI.
 
 ## Context
 
-- Building upon the initial project structure.
-- Need to allow users to select photos and extract initial data (capture date).
+- Previous step implemented basic file loading and metadata extraction.
+- Need to represent photos consistently and show them to the user.
 
 ## Completed Steps
 
-- ~~Create basic GUI main window (`MainWindow`)~~ ✓
-- ~~Add File > Open Files and File > Open Folder menu actions~~ ✓
-- ~~Implement `QFileDialog` for file/folder selection~~ ✓
-- ~~Create core `metadata_extractor` module~~ ✓
-- ~~Implement `extract_basic_metadata` function using `exifread`~~ ✓
-- ~~Connect GUI actions to call the metadata extractor~~ ✓
-- ~~Update `main.py` to launch the GUI~~ ✓
+- ~~Define data structure for photo information (e.g., `Photo` class).~~ ✓
+- ~~Implement storage for loaded photos (in-memory list initially).~~ ✓
+- ~~Display loaded photos/metadata in the GUI.~~ ✓
+  - ~~Replaced central widget QLabel with QTableWidget.~~ ✓
+  - ~~Added `update_photo_table` method to populate the table.~~ ✓
+  - ~~Sorted photos by capture date in the table.~~ ✓
 
 ## Next Task
 
-- Define data structure for photo information (e.g., `Photo` class).
-- Implement storage for loaded photos (in-memory list initially).
-- Display loaded photos/metadata in the GUI. 
+- Implement basic photo quality analysis (placeholder/rule-based initially).
+  - Add necessary fields to `Photo` class.
+  - Create core analysis module/function.
+  - Update GUI to display classification. 

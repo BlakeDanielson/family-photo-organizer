@@ -44,3 +44,5 @@
 - Created basic project structure with modules for core, GUI, and utilities
 - Photo loading
 - Metadata extraction
+- Implemented Photo data structure
+- Displayed loaded photos in GUI table

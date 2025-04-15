@@ -30,6 +30,8 @@
 - Basic project structure and module setup
 - Implemented basic photo loading via GUI (File menu)
 - Added core metadata extraction module (`exifread`)
+- Implemented `Photo` dataclass for storing image data
+- Displayed loaded photos in a GUI table (`QTableWidget`)
 
 ## User Feedback Integration and Its Impact on Development
 
