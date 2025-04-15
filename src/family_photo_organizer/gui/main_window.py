@@ -21,6 +21,8 @@ from PySide6.QtCore import Qt # For date formatting
 from family_photo_organizer.core.metadata_extractor import extract_basic_metadata
 # Import the Photo class
 from family_photo_organizer.core.photo import Photo
+# Import the analysis function
+from family_photo_organizer.core.analysis import analyze_photo_quality
 import os # Needed for folder scanning
 from datetime import datetime
 
@@ -66,10 +68,11 @@ class MainWindow(QMainWindow):
 
         # Create the table widget
         self.photo_table = QTableWidget()
-        self.photo_table.setColumnCount(2)
-        self.photo_table.setHorizontalHeaderLabels(["Filename", "Capture Date"])
+        self.photo_table.setColumnCount(3)
+        self.photo_table.setHorizontalHeaderLabels(["Filename", "Capture Date", "Classification"])
         self.photo_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch) # Filename stretches
         self.photo_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents) # Date resizes
+        self.photo_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents) # Classification resizes
         self.photo_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers) # Make read-only
         self.photo_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
 
@@ -144,6 +147,17 @@ class MainWindow(QMainWindow):
                 # Create Photo object and add to list
                 photo = Photo(file_path=file_path)
                 photo.update_metadata(metadata)
+
+                # Perform analysis
+                print(f"  Analyzing quality...")
+                analysis_data = analyze_photo_quality(file_path)
+                if analysis_data:
+                    photo.analysis_results = analysis_data
+                    photo.classification = analysis_data.get('classification')
+                    print(f"  Analysis complete. Classification: {photo.classification}, Variance: {analysis_data.get('laplacian_variance'):.2f}")
+                else:
+                    print("  Analysis failed.")
+
                 self.photos.append(photo)
                 new_photos_processed += 1
             else:
@@ -167,6 +181,13 @@ class MainWindow(QMainWindow):
             reverse=True
         )
 
+        # Define colors for classification for visual feedback (optional)
+        # classification_colors = {
+        #     'blurry': QColor("lightblue"),
+        #     'ok': QColor("lightgreen"),
+        #     # Add more as needed
+        # }
+
         for row, photo in enumerate(sorted_photos):
             filename_item = QTableWidgetItem(photo.filename)
             
@@ -180,8 +201,16 @@ class MainWindow(QMainWindow):
 
             date_item = QTableWidgetItem(date_str)
 
+            classification_str = photo.classification if photo.classification else "N/A"
+            classification_item = QTableWidgetItem(classification_str)
+
+            # Optional: Set background color based on classification
+            # if photo.classification in classification_colors:
+            #     classification_item.setBackground(classification_colors[photo.classification])
+
             self.photo_table.setItem(row, 0, filename_item)
             self.photo_table.setItem(row, 1, date_item)
+            self.photo_table.setItem(row, 2, classification_item)
 
 
 # Example usage for testing the window directly
