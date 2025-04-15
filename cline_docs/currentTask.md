@@ -9,6 +9,10 @@
 
 ## Next Steps
 
-- Initialize Git repository.
-- Create GitHub repository.
-- Push initial commit to GitHub. 
+- ~~Initialize Git repository.~~ ✓
+- ~~Create GitHub repository.~~ ✓
+- ~~Push initial commit to GitHub.~~ ✓
+- Set up the basic project structure:
+  - Create a src directory for the main application code
+  - Set up initial module structure
+  - Create a requirements.txt file 

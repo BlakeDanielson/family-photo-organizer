@@ -21,6 +21,15 @@
 
 ## Progress
 
-- [ ] Project Setup
+- [x] Create documentation files
+- [x] Initialize Git repository and GitHub project
+- [ ] Basic project structure
+- [ ] Core functionality
+- [ ] GUI implementation
+- [ ] Testing and refinement
+- [ ] Packaging and distribution
 
-## Completed Tasks 
+## Completed Tasks
+
+- Initial project setup and documentation
+- GitHub repository creation (https://github.com/BlakeDanielson/family-photo-organizer) 
