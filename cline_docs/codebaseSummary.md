@@ -34,6 +34,10 @@
 - Displayed loaded photos in a GUI table (`QTableWidget`)
 - Added core analysis module (`analysis.py`) with blur detection (Laplacian variance)
 - Integrated analysis results into `Photo` object and GUI table
+- Added perceptual hashing (`imagehash`) to `analysis.py`
+- Implemented duplicate detection logic in `process_files` based on hash comparison
+- Updated `Photo` class with duplicate tracking fields
+- Added "Duplicate Info" column to GUI table
 
 ## User Feedback Integration and Its Impact on Development
 

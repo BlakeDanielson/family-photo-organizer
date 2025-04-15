@@ -28,7 +28,7 @@
   - [x] Photo loading
   - [x] Metadata extraction
   - [x] Photo quality analysis
-  - [ ] Duplicate detection
+  - [x] Duplicate detection
 - [ ] GUI implementation
   - [ ] Main application window
   - [ ] Photo browser/viewer
@@ -47,3 +47,4 @@
 - Implemented Photo data structure
 - Displayed loaded photos in GUI table
 - Implemented basic quality analysis (blur detection)
+- Implemented duplicate detection (pHash)
