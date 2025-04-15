@@ -28,6 +28,8 @@
 
 - Project Initialization
 - Basic project structure and module setup
+- Implemented basic photo loading via GUI (File menu)
+- Added core metadata extraction module (`exifread`)
 
 ## User Feedback Integration and Its Impact on Development
 

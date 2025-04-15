@@ -25,8 +25,8 @@
 - [x] Initialize Git repository and GitHub project
 - [x] Basic project structure
 - [ ] Core functionality
-  - [ ] Photo loading
-  - [ ] Metadata extraction
+  - [x] Photo loading
+  - [x] Metadata extraction
   - [ ] Photo quality analysis
   - [ ] Duplicate detection
 - [ ] GUI implementation
@@ -41,4 +41,6 @@
 
 - Initial project setup and documentation
 - GitHub repository creation (https://github.com/BlakeDanielson/family-photo-organizer)
-- Created basic project structure with modules for core, GUI, and utilities 
+- Created basic project structure with modules for core, GUI, and utilities
+- Photo loading
+- Metadata extraction

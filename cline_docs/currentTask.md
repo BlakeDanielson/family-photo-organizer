@@ -1,25 +1,24 @@
 ## Current Objective
 
-- Set up the initial project structure, documentation, and Git repository.
+- Implement basic photo loading and metadata extraction.
 
 ## Context
 
-- Starting a new project based on the "Family Photo Organizer" technical specifications.
-- Following custom instructions for documentation and workflow.
+- Building upon the initial project structure.
+- Need to allow users to select photos and extract initial data (capture date).
 
-## Next Steps
+## Completed Steps
 
-- ~~Initialize Git repository.~~ ✓
-- ~~Create GitHub repository.~~ ✓
-- ~~Push initial commit to GitHub.~~ ✓
-- ~~Set up the basic project structure:~~ ✓
-  - ~~Create a src directory for the main application code~~ ✓
-  - ~~Set up initial module structure~~ ✓
-  - ~~Create a requirements.txt file~~ ✓
+- ~~Create basic GUI main window (`MainWindow`)~~ ✓
+- ~~Add File > Open Files and File > Open Folder menu actions~~ ✓
+- ~~Implement `QFileDialog` for file/folder selection~~ ✓
+- ~~Create core `metadata_extractor` module~~ ✓
+- ~~Implement `extract_basic_metadata` function using `exifread`~~ ✓
+- ~~Connect GUI actions to call the metadata extractor~~ ✓
+- ~~Update `main.py` to launch the GUI~~ ✓
 
 ## Next Task
 
-- Implement basic photo loading functionality:
-  - Create file browser/uploader component
-  - Implement basic image metadata extraction
-  - Create initial storage structure for photos 
+- Define data structure for photo information (e.g., `Photo` class).
+- Implement storage for loaded photos (in-memory list initially).
+- Display loaded photos/metadata in the GUI. 
