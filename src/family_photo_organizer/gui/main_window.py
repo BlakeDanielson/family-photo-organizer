@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QHeaderView,
+    QProgressDialog,
 )
 from PySide6.QtGui import QAction
 from PySide6.QtCore import Qt # For date formatting
@@ -22,7 +23,9 @@ from family_photo_organizer.core.metadata_extractor import extract_basic_metadat
 # Import the Photo class
 from family_photo_organizer.core.photo import Photo
 # Import the analysis function
-from family_photo_organizer.core.analysis import analyze_photo_quality
+from family_photo_organizer.core.analysis import analyze_photo
+# Import imagehash for comparison
+import imagehash
 import os # Needed for folder scanning
 from datetime import datetime
 
@@ -68,11 +71,12 @@ class MainWindow(QMainWindow):
 
         # Create the table widget
         self.photo_table = QTableWidget()
-        self.photo_table.setColumnCount(3)
-        self.photo_table.setHorizontalHeaderLabels(["Filename", "Capture Date", "Classification"])
+        self.photo_table.setColumnCount(4) # Add column for Duplicates
+        self.photo_table.setHorizontalHeaderLabels(["Filename", "Capture Date", "Classification", "Duplicate Info"])
         self.photo_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch) # Filename stretches
         self.photo_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents) # Date resizes
         self.photo_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents) # Classification resizes
+        self.photo_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents) # Duplicates resizes
         self.photo_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers) # Make read-only
         self.photo_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
 
@@ -131,10 +135,22 @@ class MainWindow(QMainWindow):
         Args:
             file_paths (list): A list of absolute paths to image files.
         """
+        HASH_THRESHOLD = 5 # Perceptual hash difference threshold
+
         new_photos_processed = 0
         existing_files = {photo.file_path for photo in self.photos}
         
-        for file_path in file_paths:
+        # Progress dialog for potentially long operations
+        progress = QProgressDialog("Processing photos...", "Cancel", 0, len(file_paths), self)
+        progress.setWindowModality(Qt.WindowModality.WindowModal)
+        progress.setAutoClose(True)
+        progress.setMinimumDuration(1000) # Only show if takes > 1 second
+
+        for i, file_path in enumerate(file_paths):
+            progress.setValue(i)
+            if progress.wasCanceled():
+                break
+
             if file_path in existing_files:
                 print(f"Skipping already loaded file: {os.path.basename(file_path)}")
                 continue
@@ -150,11 +166,42 @@ class MainWindow(QMainWindow):
 
                 # Perform analysis
                 print(f"  Analyzing quality...")
-                analysis_data = analyze_photo_quality(file_path)
+                analysis_data = analyze_photo(file_path)
                 if analysis_data:
-                    photo.analysis_results = analysis_data
-                    photo.classification = analysis_data.get('classification')
-                    print(f"  Analysis complete. Classification: {photo.classification}, Variance: {analysis_data.get('laplacian_variance'):.2f}")
+                    photo.update_analysis(analysis_data)
+                    print(f"  Analysis complete. Classification: {photo.classification}, pHash: {photo.phash}, Variance: {analysis_data.get('laplacian_variance', 'N/A'):.2f}")
+
+                    # --- Duplicate Check --- 
+                    if photo.phash:
+                        new_hash = imagehash.hex_to_hash(photo.phash)
+                        is_duplicate = False
+                        for existing_photo in self.photos:
+                            if existing_photo.phash and existing_photo.file_path != photo.file_path:
+                                try:
+                                    existing_hash = imagehash.hex_to_hash(existing_photo.phash)
+                                    hash_diff = new_hash - existing_hash
+                                    if hash_diff <= HASH_THRESHOLD:
+                                        # Mark as duplicate
+                                        # Simple strategy: group by the first photo encountered in the group
+                                        if existing_photo.duplicate_group_id:
+                                            photo.duplicate_group_id = existing_photo.duplicate_group_id
+                                            photo.is_duplicate_of = existing_photo.duplicate_group_id # Point to group leader
+                                        else:
+                                            # This existing photo is the first of its group
+                                            group_id = existing_photo.file_path # Use leader's path as ID
+                                            existing_photo.duplicate_group_id = group_id
+                                            photo.duplicate_group_id = group_id
+                                            photo.is_duplicate_of = group_id
+
+                                        print(f"  Potential duplicate found! (Diff: {hash_diff}) Group: {os.path.basename(photo.duplicate_group_id)}")
+                                        is_duplicate = True
+                                        break # Found a match, stop checking for this photo
+                                except ValueError:
+                                    print(f"Warning: Could not compare invalid hash for {existing_photo.filename}")
+                        # If not a duplicate of any existing photo, it could be a group leader
+                        # if not is_duplicate:
+                        #    photo.duplicate_group_id = photo.file_path # It leads its own group (of 1 initially)
+                            
                 else:
                     print("  Analysis failed.")
 
@@ -204,6 +251,20 @@ class MainWindow(QMainWindow):
             classification_str = photo.classification if photo.classification else "N/A"
             classification_item = QTableWidgetItem(classification_str)
 
+            duplicate_info_str = ""
+            if photo.is_duplicate_of:
+                 # Show just the filename of the photo it's a duplicate of
+                 duplicate_info_str = f"Dup of: {os.path.basename(photo.is_duplicate_of)}"
+            elif photo.duplicate_group_id and photo.file_path == photo.duplicate_group_id:
+                 # Indicate it's the leader of a potential group
+                 # Count members in the group
+                 group_members = sum(1 for p in self.photos if p.duplicate_group_id == photo.duplicate_group_id)
+                 if group_members > 1:
+                     duplicate_info_str = f"Group Leader ({group_members})"
+                 # else: show nothing if it's a group of 1
+
+            duplicate_item = QTableWidgetItem(duplicate_info_str)
+
             # Optional: Set background color based on classification
             # if photo.classification in classification_colors:
             #     classification_item.setBackground(classification_colors[photo.classification])
@@ -211,6 +272,7 @@ class MainWindow(QMainWindow):
             self.photo_table.setItem(row, 0, filename_item)
             self.photo_table.setItem(row, 1, date_item)
             self.photo_table.setItem(row, 2, classification_item)
+            self.photo_table.setItem(row, 3, duplicate_item)
 
 
 # Example usage for testing the window directly

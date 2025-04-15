@@ -21,6 +21,7 @@ class Photo:
     is_duplicate_of: Optional[str] = None # file_path of the primary photo in a group
     duplicate_group_id: Optional[str] = None
     analysis_results: Dict[str, Any] = field(default_factory=dict) # For other metrics
+    phash: Optional[str] = None
 
     def __post_init__(self):
         """Initialize filename after object creation."""
@@ -35,6 +36,14 @@ class Photo:
              # Handle cases where capture_date might be in metadata but not datetime initially
             if isinstance(self.metadata['capture_date'], datetime):
                 self.capture_date = self.metadata['capture_date']
+
+    def update_analysis(self, analysis_data: Dict[str, Any]):
+        """Updates the photo's analysis results."""
+        self.analysis_results.update(analysis_data)
+        if 'classification' in analysis_data:
+            self.classification = analysis_data['classification']
+        if 'phash' in analysis_data:
+            self.phash = analysis_data['phash']
 
 # Example usage:
 if __name__ == '__main__':

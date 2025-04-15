@@ -13,4 +13,4 @@ exifread>=3.0.0
 pytest>=7.3.1
 
 # Packaging
-pyinstaller>=5.9.0 
+pyinstaller>=5.9.0
