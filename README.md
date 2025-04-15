@@ -13,10 +13,63 @@ A local desktop application to help organize family photos using AI analysis for
 *   Automated backup to a single archive file
 *   First-launch tutorial
 
+## Project Structure
+
+```
+family-photo-organizer/
+├── src/
+│   ├── family_photo_organizer/    # Main package
+│   │   ├── core/                  # Core functionality
+│   │   ├── gui/                   # User interface
+│   │   └── utils/                 # Helper utilities
+│   └── main.py                    # Entry point
+├── tests/                         # Unit and integration tests
+├── docs/                          # Documentation
+├── assets/                        # Images and resources
+└── cline_docs/                    # Project management docs
+```
+
 ## Setup
 
-*(Instructions to be added)*
+1. Clone the repository:
+   ```
+   git clone https://github.com/BlakeDanielson/family-photo-organizer.git
+   cd family-photo-organizer
+   ```
+
+2. Create a virtual environment:
+   ```
+   python -m venv venv
+   ```
+
+3. Activate the virtual environment:
+   - Windows:
+     ```
+     venv\Scripts\activate
+     ```
+   - macOS/Linux:
+     ```
+     source venv/bin/activate
+     ```
+
+4. Install dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
 
 ## Development
 
-*(Instructions to be added)* 
+1. Install in development mode:
+   ```
+   pip install -e .
+   ```
+
+2. Run the application:
+   ```
+   python src/main.py
+   ```
+
+3. Run tests:
+   ```
+   pytest
+   ``` 

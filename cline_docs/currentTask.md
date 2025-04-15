@@ -12,7 +12,14 @@
 - ~~Initialize Git repository.~~ ✓
 - ~~Create GitHub repository.~~ ✓
 - ~~Push initial commit to GitHub.~~ ✓
-- Set up the basic project structure:
-  - Create a src directory for the main application code
-  - Set up initial module structure
-  - Create a requirements.txt file 
+- ~~Set up the basic project structure:~~ ✓
+  - ~~Create a src directory for the main application code~~ ✓
+  - ~~Set up initial module structure~~ ✓
+  - ~~Create a requirements.txt file~~ ✓
+
+## Next Task
+
+- Implement basic photo loading functionality:
+  - Create file browser/uploader component
+  - Implement basic image metadata extraction
+  - Create initial storage structure for photos 
