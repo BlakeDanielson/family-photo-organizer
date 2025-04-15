@@ -27,7 +27,7 @@
 - [ ] Core functionality
   - [x] Photo loading
   - [x] Metadata extraction
-  - [ ] Photo quality analysis
+  - [x] Photo quality analysis
   - [ ] Duplicate detection
 - [ ] GUI implementation
   - [ ] Main application window
@@ -46,3 +46,4 @@
 - Metadata extraction
 - Implemented Photo data structure
 - Displayed loaded photos in GUI table
+- Implemented basic quality analysis (blur detection)

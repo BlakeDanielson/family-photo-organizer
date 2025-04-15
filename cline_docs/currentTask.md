@@ -1,24 +1,24 @@
 ## Current Objective
 
-- Define data structure, store photos, and display in GUI.
+- Implement basic photo quality analysis.
 
 ## Context
 
-- Previous step implemented basic file loading and metadata extraction.
-- Need to represent photos consistently and show them to the user.
+- Photos are loaded and displayed in the GUI.
+- Need to start classifying photos based on quality metrics.
 
 ## Completed Steps
 
-- ~~Define data structure for photo information (e.g., `Photo` class).~~ ✓
-- ~~Implement storage for loaded photos (in-memory list initially).~~ ✓
-- ~~Display loaded photos/metadata in the GUI.~~ ✓
-  - ~~Replaced central widget QLabel with QTableWidget.~~ ✓
-  - ~~Added `update_photo_table` method to populate the table.~~ ✓
-  - ~~Sorted photos by capture date in the table.~~ ✓
+- ~~Implement basic photo quality analysis (placeholder/rule-based initially).~~ ✓
+  - ~~Add necessary fields to `Photo` class.~~ ✓ (Already present)
+  - ~~Create core analysis module/function (`analysis.py`, `analyze_photo_quality`).~~ ✓
+  - ~~Update GUI to display classification (added column to table).~~ ✓
+  - ~~Integrated analysis call into `process_files`.~~ ✓
 
 ## Next Task
 
-- Implement basic photo quality analysis (placeholder/rule-based initially).
-  - Add necessary fields to `Photo` class.
-  - Create core analysis module/function.
-  - Update GUI to display classification. 
+- Implement duplicate detection:
+  - Choose and implement hashing algorithm (e.g., pHash/dHash from `imagehash`).
+  - Add duplicate detection logic to the core module.
+  - Update `Photo` class with duplicate information fields.
+  - Update GUI to indicate duplicates (e.g., grouping, highlighting). 

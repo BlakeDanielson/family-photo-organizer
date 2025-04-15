@@ -32,6 +32,8 @@
 - Added core metadata extraction module (`exifread`)
 - Implemented `Photo` dataclass for storing image data
 - Displayed loaded photos in a GUI table (`QTableWidget`)
+- Added core analysis module (`analysis.py`) with blur detection (Laplacian variance)
+- Integrated analysis results into `Photo` object and GUI table
 
 ## User Feedback Integration and Its Impact on Development
 
